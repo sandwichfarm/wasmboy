@@ -85,4 +85,21 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should be able to load a JSON parsed save state', async () => {
+    await playWasmBoy();
+
+    const saveState = await WasmBoy.saveState();
+    const parsedSaveState = JSON.parse(JSON.stringify(saveState, (key, value) => (ArrayBuffer.isView(value) ? Array.from(value) : value)));
+
+    await playWasmBoy();
+
+    await WasmBoy.loadState(parsedSaveState);
+
+    const saveStateAfterLoad = await WasmBoy.saveState();
+    assert(new Uint8Array(saveStateAfterLoad.wasmboyMemory.wasmBoyInternalState).length > 0);
+    assert(new Uint8Array(saveStateAfterLoad.wasmboyMemory.wasmBoyPaletteMemory).length > 0);
+    assert(new Uint8Array(saveStateAfterLoad.wasmboyMemory.gameBoyMemory).length > 0);
+    assert(new Uint8Array(saveStateAfterLoad.wasmboyMemory.cartridgeRam).length > 0);
+  });
 });
