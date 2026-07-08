@@ -3,7 +3,7 @@ import { PUBX_KEYS } from './pubx.config';
 import { WasmBoy } from './wasmboy';
 import DebuggerAnalytics from './analytics';
 
-export default function(file, fileName) {
+export default function(file, fileName, options = {}) {
   const loadROMTask = async () => {
     await WasmBoy.pause();
     await WasmBoy.loadROM(file);
@@ -18,7 +18,7 @@ export default function(file, fileName) {
     });
 
     // Check if the Playback Control or CPU Control is open , if not, let's autoplay
-    if (Pubx.get(PUBX_KEYS.MOBILE).isMobile || !Pubx.get(PUBX_KEYS.WIDGET).isControlWidgetsOpen()) {
+    if (options.forcePlay || Pubx.get(PUBX_KEYS.MOBILE).isMobile || !Pubx.get(PUBX_KEYS.WIDGET).isControlWidgetsOpen()) {
       await WasmBoy.play();
     }
 
@@ -39,4 +39,6 @@ export default function(file, fileName) {
   });
 
   Pubx.get(PUBX_KEYS.LOADING).addControlPromise(loadROMPromise, true);
+
+  return loadROMPromise;
 }

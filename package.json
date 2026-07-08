@@ -75,6 +75,8 @@
     "test:integration:nobuild": "run-s test:integration:lib test:integration:headless",
     "test:integration:lib": "node --experimental-worker node_modules/mocha/bin/_mocha test/integration/lib-test.js --exit",
     "test:integration:headless": "node --experimental-worker node_modules/mocha/bin/_mocha test/integration/headless-simple.js --timeout 20000 --exit",
+    "test:debugger": "npm run test:debugger:autoload",
+    "test:debugger:autoload": "node node_modules/mocha/bin/_mocha test/debugger/auto-load-rom.js --exit",
     "test:core": "run-s build test:core:savestate",
     "test:core:nobuild": "run-s test:core:savestate",
     "test:core:savestate": "node --experimental-worker node_modules/mocha/bin/_mocha test/core/save-state.js --timeout 10000 --exit",

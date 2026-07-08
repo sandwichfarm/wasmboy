@@ -13,6 +13,8 @@ import './index.css';
 import WidgetManager from './widgetManager';
 
 import menus from './menus';
+import loadROM from './loadROM';
+import { autoLoadROMFromQueryString } from './autoLoadROM';
 
 import { Pubx } from 'pubx';
 import { PUBX_KEYS, PUBX_INITIALIZE } from './pubx.config';
@@ -61,12 +63,16 @@ render(<Overlay />, overlayContainer);
 // Bind the Mobile UI to DOM
 const mobileContainer = document.getElementById('mobile-container');
 render(<Mobile />, mobileContainer);
-Pubx.get(PUBX_KEYS.MOBILE).update();
+const initialCanvasUpdate = Pubx.get(PUBX_KEYS.MOBILE).update();
 
 // Show a nice welcome message
 setTimeout(() => {
   Pubx.get(PUBX_KEYS.NOTIFICATION).showNotification('Welcome to the WasmBoy Debugger/Demo!');
 }, 100);
+
+Promise.resolve(initialCanvasUpdate).then(() => {
+  autoLoadROMFromQueryString(window.location.search, loadROM, window.location.href);
+});
 
 // Add some hotkeys
 let quickSpeed = false;

@@ -142,9 +142,7 @@ export const WasmBoyUpdateCanvas = (isMobile, stateUpdateCallback) => {
     await WasmBoy.setCanvas(canvasElement);
     await WasmBoy.play();
   };
-  updateTask();
-
-  return true;
+  return updateTask();
 };
 
 // WasmBoy Plugin

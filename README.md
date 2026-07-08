@@ -94,6 +94,8 @@ Try to test and aim for support on all major browsers (Chrome, Firefox, and Safa
 
 [Application Link](https://wasmboy.app/)
 
+To auto-load and play a hosted ROM, open the debugger with `?rom=<encoded-rom-url>`. You can set a display name with `romName`.
+
 A full debugger meant for analyzing the internals of the gameboy. Great for HomeBrew Gameboy Development, or using as a reference point for building your own GameBoy emulator. **See the gif at the top of the README for an example.**
 
 **Features**
