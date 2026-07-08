@@ -1,0 +1,9 @@
+.background-map__controls {
+  margin-bottom: 8px;
+}
+
+.background-map__controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

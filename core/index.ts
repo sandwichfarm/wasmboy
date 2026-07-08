@@ -92,6 +92,7 @@ export {
   getWindowX,
   getWindowY,
   drawBackgroundMapToWasmMemory,
+  drawBackgroundMapByTileMapToWasmMemory,
   drawTileDataToWasmMemory,
   drawOamToWasmMemory
 } from './debug/debug-graphics';

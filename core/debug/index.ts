@@ -12,7 +12,13 @@ export {
   getStackPointer,
   getOpcodeAtProgramCounter
 } from './debug-cpu';
-export { getLY, drawBackgroundMapToWasmMemory, drawTileDataToWasmMemory, drawOamToWasmMemory } from './debug-graphics';
+export {
+  getLY,
+  drawBackgroundMapToWasmMemory,
+  drawBackgroundMapByTileMapToWasmMemory,
+  drawTileDataToWasmMemory,
+  drawOamToWasmMemory
+} from './debug-graphics';
 export { getDIV, getTIMA, getTMA, getTAC } from './debug-timer';
 export {
   Breakpoints,

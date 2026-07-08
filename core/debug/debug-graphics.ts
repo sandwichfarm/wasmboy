@@ -40,7 +40,7 @@ export function getWindowY(): i32 {
 }
 
 // TODO: Render by tile, rather than by pixel
-export function drawBackgroundMapToWasmMemory(showColor: i32): void {
+function drawBackgroundMapFromTileMapToWasmMemory(showColor: i32, tileMapMemoryLocation: i32): void {
   // http://www.codeslinger.co.uk/pages/projects/gameboy/graphics.html
   // Bit 7 - LCD Display Enable (0=Off, 1=On)
   // Bit 6 - Window Tile Map Display Select (0=9800-9BFF, 1=9C00-9FFF)
@@ -55,11 +55,6 @@ export function drawBackgroundMapToWasmMemory(showColor: i32): void {
   let tileDataMemoryLocation = Graphics.memoryLocationTileDataSelectZeroStart;
   if (Lcd.bgWindowTileDataSelect) {
     tileDataMemoryLocation = Graphics.memoryLocationTileDataSelectOneStart;
-  }
-
-  let tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectZeroStart;
-  if (Lcd.bgTileMapDisplaySelect) {
-    tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectOneStart;
   }
 
   for (let y: i32 = 0; y < 256; y++) {
@@ -204,6 +199,24 @@ export function drawBackgroundMapToWasmMemory(showColor: i32): void {
       }
     }
   }
+}
+
+export function drawBackgroundMapToWasmMemory(showColor: i32): void {
+  let tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectZeroStart;
+  if (Lcd.bgTileMapDisplaySelect) {
+    tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectOneStart;
+  }
+
+  drawBackgroundMapFromTileMapToWasmMemory(showColor, tileMapMemoryLocation);
+}
+
+export function drawBackgroundMapByTileMapToWasmMemory(showColor: i32, tileMap: i32): void {
+  let tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectZeroStart;
+  if (tileMap === 1) {
+    tileMapMemoryLocation = Graphics.memoryLocationTileMapSelectOneStart;
+  }
+
+  drawBackgroundMapFromTileMapToWasmMemory(showColor, tileMapMemoryLocation);
 }
 
 export function drawTileDataToWasmMemory(): void {
