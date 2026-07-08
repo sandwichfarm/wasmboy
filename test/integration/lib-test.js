@@ -85,4 +85,11 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should load a ROM from a file path in headless mode', async () => {
+    await WasmBoy.config(WASMBOY_INITIALIZE_OPTIONS);
+    await WasmBoy.loadROM(`${testRomsPath}/back-to-color/back-to-color.gbc`);
+
+    assert.strictEqual(WasmBoy.isReady(), true);
+  });
 });
