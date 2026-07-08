@@ -109,6 +109,8 @@ export function PUBX_INITIALIZE() {
         isLandscape: landscape && mobile,
         isPortrait: portrait && mobile
       });
+
+      return updatedCanvas;
     }
   });
 
