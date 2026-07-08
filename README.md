@@ -29,6 +29,7 @@
 
 - [Features](#features)
 - [Usage](#usage)
+  - [Loading a ROM](#loading-a-rom)
   - [Supported Platforms](#supported-platforms)
 - [In-Game Screenshots](#in-game-screenshots)
   - [Gameboy Support](#gameboy-support)
@@ -73,6 +74,28 @@ Simply install through npm:
 `npm install --save wasmboy`
 
 Documentation for the project can be found on the [WasmBoy Wiki](https://github.com/torch2424/wasmBoy/wiki).
+
+### Loading a ROM
+
+```javascript
+import { WasmBoy } from 'wasmboy';
+
+const canvas = document.querySelector('canvas');
+
+await WasmBoy.config(
+  {
+    isGbcEnabled: true,
+    isAudioEnabled: true
+  },
+  canvas
+);
+
+// Load a hosted ROM URL.
+await WasmBoy.loadROM('/roms/demo.gb');
+await WasmBoy.play();
+```
+
+You can also pass a `File` from an `<input type="file">` or a `Uint8Array` of ROM bytes to `WasmBoy.loadROM()`.
 
 ### Supported Platforms
 
