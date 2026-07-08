@@ -85,4 +85,25 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should keep externally hosted worker and wasm asset URLs in config', async () => {
+    const workerUrls = {
+      lib: '/assets/wasmboy/worker/wasmboy.wasm.worker.js',
+      graphics: '/assets/wasmboy/worker/graphics.worker.js',
+      audio: '/assets/wasmboy/worker/audio.worker.js',
+      controller: '/assets/wasmboy/worker/controller.worker.js',
+      memory: '/assets/wasmboy/worker/memory.worker.js'
+    };
+    const wasmCoreUrl = '/assets/wasmboy/core/core.untouched.wasm';
+
+    await WasmBoy.config({
+      ...WASMBOY_INITIALIZE_OPTIONS,
+      workerUrls,
+      wasmCoreUrl
+    });
+
+    const config = WasmBoy.getConfig();
+    assert.deepStrictEqual(config.workerUrls, workerUrls);
+    assert.strictEqual(config.wasmCoreUrl, wasmCoreUrl);
+  });
 });
