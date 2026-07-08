@@ -233,7 +233,7 @@ Feel free to fork and submit PRs! Opening an issue is reccomended before startin
 
 ### Installation
 
-Just your standard node app. Install Node with [nvm](https://github.com/creationix/nvm), `git clone` the project, and `npm install`, and you should be good to go!
+Just your standard node app. Install Node 20+ and npm 10+ with [nvm](https://github.com/creationix/nvm), `git clone` the project, and `npm install`, and you should be good to go. The repo includes an `.npmrc` so modern npm uses the legacy peer dependency resolution required by the older Rollup/Svelte plugin graph.
 
 ### CLI Commands / Npm Scripts
 
