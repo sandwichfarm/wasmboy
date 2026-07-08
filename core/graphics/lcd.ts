@@ -58,6 +58,7 @@ export class Lcd {
   static tallSpriteSize: boolean = false;
   static spriteDisplayEnable: boolean = false;
   static bgDisplayEnabled: boolean = false;
+  static blankFrameAfterLcdEnable: boolean = false;
 
   // Function called in write traps to update our hardware registers
   static updateLcdControl(value: i32): void {
@@ -75,11 +76,13 @@ export class Lcd {
     if (wasLcdEnabled && !Lcd.enabled) {
       // Disable the LCD
       resetLcd(true);
+      Lcd.blankFrameAfterLcdEnable = false;
     }
 
     if (!wasLcdEnabled && Lcd.enabled) {
       // Re-enable the LCD
-      resetLcd(false);
+      resetLcd(true);
+      Lcd.blankFrameAfterLcdEnable = true;
     }
   }
 }

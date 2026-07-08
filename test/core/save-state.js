@@ -24,7 +24,82 @@ const getTestRomArray = () => new Uint8Array(fs.readFileSync(`${testRomsPath}/to
 const GAMEBOY_CAMERA_WIDTH = 160;
 const GAMEBOY_CAMERA_HEIGHT = 144;
 
+const makeFirstWhiteFrameRom = () => {
+  const rom = new Uint8Array(0x8000);
+
+  // ROM only, DMG-compatible cartridge header values.
+  rom[0x0147] = 0x00;
+  rom[0x0143] = 0x00;
+
+  const program = [
+    0xf3, // di
+    0xaf, // xor a
+    0xe0,
+    0x40, // ldh ($ff40), a ; LCD off
+    0x21,
+    0x00,
+    0x80, // ld hl, $8000
+    0x3e,
+    0xff, // ld a, $ff
+    ...Array(16).fill(0x22), // ld (hl+), a ; solid tile 0
+    0xaf, // xor a
+    0x21,
+    0x00,
+    0x98, // ld hl, $9800
+    0x77, // ld (hl), a
+    0x3e,
+    0xe4, // ld a, $e4 ; standard DMG palette
+    0xe0,
+    0x47, // ldh ($ff47), a
+    0x3e,
+    0x91, // ld a, $91 ; LCD on, bg on, tile data at $8000
+    0xe0,
+    0x40, // ldh ($ff40), a
+    0xc3,
+    0x26,
+    0x01 // jp $0126
+  ];
+
+  rom.set(program, 0x0100);
+  return rom;
+};
+
+const getCoreFrame = wasmboy => {
+  const memory = new Uint8Array(wasmboy.memory.buffer);
+  return memory.slice(wasmboy.FRAME_LOCATION, wasmboy.FRAME_LOCATION + wasmboy.FRAME_SIZE);
+};
+
+const isWhiteFrame = frame => frame.every(value => value === 255);
+const hasNonWhitePixel = frame => frame.some(value => value !== 255);
+
 describe('WasmBoy Core Save State', () => {
+  it('keeps the first frame white after re-enabling LCD', async () => {
+    const wasmboyCore = await getWasmBoyCore();
+    const wasmboy = wasmboyCore.instance.exports;
+    const wasmByteMemoryArray = new Uint8Array(wasmboy.memory.buffer);
+
+    wasmByteMemoryArray.set(makeFirstWhiteFrameRom(), wasmboy.CARTRIDGE_ROM_LOCATION);
+
+    wasmboy.config(
+      0, // enableBootRom: i32,
+      0, // useGbcWhenAvailable: i32,
+      0, // audioBatchProcessing: i32,
+      0, // graphicsBatchProcessing: i32,
+      0, // timersBatchProcessing: i32,
+      0, // graphicsDisableScanlineRendering: i32,
+      0, // audioAccumulateSamples: i32,
+      0, // tileRendering: i32,
+      0, // tileCaching: i32,
+      0 // enableAudioDebugging: i32
+    );
+
+    wasmboy.executeFrame();
+    assert.strictEqual(isWhiteFrame(getCoreFrame(wasmboy)), true);
+
+    wasmboy.executeFrame();
+    assert.strictEqual(hasNonWhitePixel(getCoreFrame(wasmboy)), true);
+  });
+
   it('Should be able to repeatedly save and load states', function(done) {
     // Our Save State Memory
     let cartridgeRam = undefined;

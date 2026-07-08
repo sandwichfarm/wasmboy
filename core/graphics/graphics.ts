@@ -112,6 +112,7 @@ export class Graphics {
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x10, Graphics.saveStateSlot), Lcd.tallSpriteSize);
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x11, Graphics.saveStateSlot), Lcd.spriteDisplayEnable);
     storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x12, Graphics.saveStateSlot), Lcd.bgDisplayEnabled);
+    storeBooleanDirectlyToWasmMemory(getSaveStateMemoryOffset(0x13, Graphics.saveStateSlot), Lcd.blankFrameAfterLcdEnable);
   }
 
   // Function to load the save state from memory
@@ -135,6 +136,7 @@ export class Graphics {
     Lcd.tallSpriteSize = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x10, Graphics.saveStateSlot));
     Lcd.spriteDisplayEnable = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x11, Graphics.saveStateSlot));
     Lcd.bgDisplayEnabled = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x12, Graphics.saveStateSlot));
+    Lcd.blankFrameAfterLcdEnable = loadBooleanDirectlyFromWasmMemory(getSaveStateMemoryOffset(0x13, Graphics.saveStateSlot));
   }
 }
 
@@ -160,6 +162,7 @@ export function initializeGraphics(): void {
   Graphics.scrollY = 0;
   Graphics.windowX = 0;
   Graphics.windowY = 0;
+  Lcd.blankFrameAfterLcdEnable = false;
 
   Graphics.scanlineRegister = 0x90;
 
@@ -225,14 +228,17 @@ export function updateGraphics(numberOfCycles: i32): void {
       // Move to next scanline
       // let scanlineRegister: i32 = eightBitLoadFromGBMemory(Graphics.memoryLocationScanlineRegister);
       let scanlineRegister = Graphics.scanlineRegister;
+      let blankFrameAfterLcdEnable = Lcd.blankFrameAfterLcdEnable;
 
       // Check if we've reached the last scanline
       if (scanlineRegister === 144) {
         // Draw the scanline
-        if (!graphicsDisableScanlineRendering) {
-          _drawScanline(scanlineRegister);
-        } else {
-          _renderEntireFrame();
+        if (!blankFrameAfterLcdEnable) {
+          if (!graphicsDisableScanlineRendering) {
+            _drawScanline(scanlineRegister);
+          } else {
+            _renderEntireFrame();
+          }
         }
 
         // Clear the priority map
@@ -242,9 +248,13 @@ export function updateGraphics(numberOfCycles: i32): void {
         resetTileCache();
       } else if (scanlineRegister < 144) {
         // Draw the scanline
-        if (!graphicsDisableScanlineRendering) {
+        if (!graphicsDisableScanlineRendering && !blankFrameAfterLcdEnable) {
           _drawScanline(scanlineRegister);
         }
+      }
+
+      if (blankFrameAfterLcdEnable && scanlineRegister === 153) {
+        Lcd.blankFrameAfterLcdEnable = false;
       }
 
       // Post increment the scanline register after drawing
