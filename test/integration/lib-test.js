@@ -85,4 +85,21 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should report playing state inside the onPlay callback', async () => {
+    let onPlayIsPlaying = undefined;
+
+    await WasmBoy.config({
+      ...WASMBOY_INITIALIZE_OPTIONS,
+      onPlay: () => {
+        onPlayIsPlaying = WasmBoy.isPlaying();
+      }
+    });
+    await WasmBoy.loadROM(getTestRomArray());
+
+    await WasmBoy.play();
+    await WasmBoy.pause();
+
+    assert.strictEqual(onPlayIsPlaying, true);
+  });
 });
