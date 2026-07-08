@@ -8,12 +8,13 @@ import { terser } from 'rollup-plugin-terser';
 import bundleSize from 'rollup-plugin-bundle-size';
 import copy from 'rollup-plugin-copy-glob';
 import json from 'rollup-plugin-json';
+import hashGenerator from 'hash-generator';
+import fs from 'fs';
+import { spawn } from 'child_process';
 
 const production = !process.env.SERVE;
 
-const hashGenerator = require('hash-generator');
 const bundleHash = hashGenerator(10);
-const fs = require('fs');
 
 let jsBundle = 'bundle.js';
 let cssBundle = 'bundle.css';
@@ -30,7 +31,7 @@ const serve = () => {
       if (!started) {
         started = true;
 
-        require('child_process').spawn('npm', ['run', 'iframe:serve'], {
+        spawn('npm', ['run', 'iframe:serve'], {
           stdio: ['ignore', 'inherit', 'inherit'],
           shell: true
         });

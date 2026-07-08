@@ -12,4 +12,4 @@ script:
   - npm run test:accuracy:nobuild
   - npm run test:integration:nobuild
   - npm run test:core:nobuild
-  #TODO: - npm run wasmerboy:build
+  - npm run wasmerboy:build
