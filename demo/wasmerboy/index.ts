@@ -7,7 +7,7 @@ import { showHelp } from './cli/cli';
 import { GREEN, CYAN, RED, printColor } from './cli/ansi';
 
 // Import our CommandLine for grabbing args
-import { CommandLine, FileSystem, Descriptor, Console, Time, Date } from 'as-wasi';
+import { CommandLine, FileSystem, Descriptor, Console, Time, Date } from './as-wasi';
 
 import {
   isIoDevicesEnabled,
@@ -15,7 +15,7 @@ import {
   drawRgbaArrayToFrameBuffer,
   updateInput,
   isKeyPressed
-} from '../../node_modules/@wasmer/io-devices-lib-assemblyscript/lib/lib';
+} from './io-devices/lib';
 
 let GAMEBOY_CAMERA_WIDTH = 160;
 let GAMEBOY_CAMERA_HEIGHT = 144;

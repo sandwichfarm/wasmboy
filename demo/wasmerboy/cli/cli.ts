@@ -1,6 +1,6 @@
 // Convinience functions for our CLI
 
-import { Console } from 'as-wasi';
+import { Console } from '../as-wasi';
 import { GREEN, CYAN, RED, printColor } from './ansi';
 
 export function showHelp(): void {

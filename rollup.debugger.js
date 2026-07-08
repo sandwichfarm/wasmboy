@@ -15,9 +15,7 @@ import postcssImport from 'postcss-import';
 import copy from 'rollup-plugin-copy-glob';
 import del from 'rollup-plugin-delete';
 import hash from 'rollup-plugin-hash';
-import pkg from './package.json';
-
-const fs = require('fs');
+import fs from 'fs';
 
 const writeIndexHtmlToBuild = bundleName => {
   let indexHtml = fs.readFileSync('demo/debugger/index.html', 'utf8');
