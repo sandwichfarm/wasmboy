@@ -118,7 +118,7 @@ export class Graphics {
   static loadState(): void {
     // Graphics
     Graphics.scanlineCycleCounter = load<i32>(getSaveStateMemoryOffset(0x00, Graphics.saveStateSlot));
-    Graphics.scanlineRegister = load<u8>(getSaveStateMemoryOffset(0x04, Graphics.scanlineRegister));
+    Graphics.scanlineRegister = load<u8>(getSaveStateMemoryOffset(0x04, Graphics.saveStateSlot));
     Graphics.scrollX = load<u8>(getSaveStateMemoryOffset(0x05, Graphics.saveStateSlot));
     Graphics.scrollY = load<u8>(getSaveStateMemoryOffset(0x06, Graphics.saveStateSlot));
     Graphics.windowX = load<u8>(getSaveStateMemoryOffset(0x07, Graphics.saveStateSlot));

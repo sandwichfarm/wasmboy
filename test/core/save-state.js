@@ -25,6 +25,50 @@ const GAMEBOY_CAMERA_WIDTH = 160;
 const GAMEBOY_CAMERA_HEIGHT = 144;
 
 describe('WasmBoy Core Save State', () => {
+  it('Should load the graphics scanline from the graphics save state slot', function(done) {
+    const asyncTask = async () => {
+      const wasmboyCore = await getWasmBoyCore();
+      const wasmboy = wasmboyCore.instance.exports;
+      const wasmByteMemoryArray = new Uint8Array(wasmboy.memory.buffer);
+
+      wasmByteMemoryArray.set(getTestRomArray(), wasmboy.CARTRIDGE_ROM_LOCATION);
+
+      wasmboy.config(
+        0, // enableBootRom: i32,
+        1, // useGbcWhenAvailable: i32,
+        1, // audioBatchProcessing: i32,
+        0, // graphicsBatchProcessing: i32,
+        0, // timersBatchProcessing: i32,
+        0, // graphicsDisableScanlineRendering: i32,
+        1, // audioAccumulateSamples: i32,
+        0, // tileRendering: i32,
+        0, // tileCaching: i32,
+        0 // enableAudioDebugging: i32
+      );
+
+      const saveStateSlotSize = 50;
+      const graphicsSaveStateSlot = 1;
+      const scanlineOffset = 0x04;
+      const configuredScanline = 0x90;
+      const expectedScanline = 77;
+      const wrongSlotScanline = 13;
+      const graphicsScanlineAddress = wasmboy.WASMBOY_STATE_LOCATION + saveStateSlotSize * graphicsSaveStateSlot + scanlineOffset;
+      const wrongScanlineAddress = wasmboy.WASMBOY_STATE_LOCATION + saveStateSlotSize * configuredScanline + scanlineOffset;
+
+      wasmByteMemoryArray[graphicsScanlineAddress] = expectedScanline;
+      wasmByteMemoryArray[wrongScanlineAddress] = wrongSlotScanline;
+
+      wasmboy.loadState();
+      wasmboy.saveState();
+
+      assert.strictEqual(wasmByteMemoryArray[graphicsScanlineAddress], expectedScanline);
+    };
+
+    asyncTask()
+      .then(done)
+      .catch(done);
+  });
+
   it('Should be able to repeatedly save and load states', function(done) {
     // Our Save State Memory
     let cartridgeRam = undefined;
