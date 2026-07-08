@@ -39,6 +39,8 @@
     "watch:ts": "npm run start:ts",
     "build": "run-s core:build lib:build:wasm",
     "deploy": "run-s lib:deploy demo:deploy",
+    "help": "node cli.js",
+    "help:check": "node cli.js --check",
     "prettier": "npm run prettier:lint:fix",
     "prettier:lint": "run-s prettier:lint:message prettier:lint:list",
     "prettier:lint:message": "echo \"Listing unlinted files, will show nothing if everything is fine.\"",
