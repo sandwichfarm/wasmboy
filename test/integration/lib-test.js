@@ -62,6 +62,17 @@ describe('WasmBoy Lib', () => {
       });
   });
 
+  it('should initialize work ram with random garbage bytes', async () => {
+    const workRamLocation = await WasmBoy._getWasmConstant('WORK_RAM_LOCATION');
+    const workRamSize = await WasmBoy._getWasmConstant('WORK_RAM_SIZE');
+    const workRam = await WasmBoy._getWasmMemorySection(workRamLocation, workRamLocation + workRamSize);
+
+    assert(
+      workRam.some(value => value !== 0),
+      true
+    );
+  });
+
   it('should be able to save/load state', async () => {
     // Play a snippet of WasmBoy
     await playWasmBoy();
