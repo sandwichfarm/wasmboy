@@ -79,17 +79,9 @@ export function checkWriteTraps(offset: i32, value: i32): boolean {
   // Can only read/write from OAM During Modes 0 - 1
   // See graphics/lcd.ts
   if (offset >= spriteInformationTableLocation && offset <= Memory.spriteInformationTableLocationEnd) {
-    // Can only read/write from OAM During Mode 2
+    // Cannot read/write from OAM during modes 2 - 3.
     // See graphics/lcd.ts
-    // if (Lcd.currentLcdMode < 2) {
-    // return false;
-    // }
-    // Not batch processing here for performance
-    // batchProcessGraphics();
-
-    // Allow the original write, and return since we dont need to look anymore
-    // return true;
-    return Lcd.currentLcdMode >= 2;
+    return Lcd.currentLcdMode < 2;
   }
 
   if (offset >= Memory.unusableMemoryLocation && offset <= Memory.unusableMemoryEndLocation) {
