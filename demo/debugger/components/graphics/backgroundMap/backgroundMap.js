@@ -1,16 +1,21 @@
 import { h, Component } from 'preact';
 
-import { Pubx } from 'pubx';
-import { PUBX_KEYS } from '../../../pubx.config';
-
 import { WasmBoy } from '../../../wasmboy';
 
 import './backgroundMap.css';
 
+const TILE_MAP_MODE_AUTO = 'auto';
+const TILE_MAP_MODE_ZERO = '9800';
+const TILE_MAP_MODE_ONE = '9c00';
+
 // To Stop memory leaks, see disassembler
-const updateBackgroundMapTask = async (canvasElement, canvasContext, canvasImageData) => {
+const updateBackgroundMapTask = async (canvasElement, canvasContext, canvasImageData, tileMapMode) => {
   // Draw our background map
-  await WasmBoy._runWasmExport('drawBackgroundMapToWasmMemory', [1]);
+  if (tileMapMode === TILE_MAP_MODE_AUTO) {
+    await WasmBoy._runWasmExport('drawBackgroundMapToWasmMemory', [1]);
+  } else {
+    await WasmBoy._runWasmExport('drawBackgroundMapByTileMapToWasmMemory', [1, tileMapMode === TILE_MAP_MODE_ONE ? 1 : 0]);
+  }
 
   // Get our background map location constant
   const backgroundMapLocation = await WasmBoy._getWasmConstant('BACKGROUND_MAP_LOCATION');
@@ -103,6 +108,9 @@ export default class BackgroundMap extends Component {
 
     this.shouldUpdate = true;
     this.updateTimeout = false;
+    this.state = {
+      tileMapMode: TILE_MAP_MODE_AUTO
+    };
   }
 
   componentDidMount() {
@@ -154,13 +162,23 @@ export default class BackgroundMap extends Component {
     if (!WasmBoy.isReady() || WasmBoy.isPaused()) {
       return Promise.resolve();
     }
-    return updateBackgroundMapTask(canvasElement, canvasContext, canvasImageData);
+    return updateBackgroundMapTask(canvasElement, canvasContext, canvasImageData, this.state.tileMapMode);
   }
 
   render() {
     return (
       <div id="background-map">
         <h1>Background Map</h1>
+        <div class="background-map__controls">
+          <label>
+            Tile Map
+            <select value={this.state.tileMapMode} onChange={event => this.setState({ tileMapMode: event.target.value })}>
+              <option value={TILE_MAP_MODE_AUTO}>Auto (LCDC)</option>
+              <option value={TILE_MAP_MODE_ZERO}>9800-9BFF</option>
+              <option value={TILE_MAP_MODE_ONE}>9C00-9FFF</option>
+            </select>
+          </label>
+        </div>
         <canvas id="background-map__canvas" class="pixel-canvas" width="256" height="256" />
       </div>
     );
