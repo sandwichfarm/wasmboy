@@ -85,4 +85,10 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should tag save states with the WasmBoy version', async () => {
+    const saveState = await WasmBoy.saveState();
+
+    assert.strictEqual(saveState.wasmboyVersion, WasmBoy.getVersion());
+  });
 });
