@@ -34,15 +34,16 @@ const wasmNodeInstantiate = async wasmModuleUrl => {
 };
 
 // Function to instantiate our wasm and respond back
-const getWasmBoyWasmCore = async isInBrowser => {
+const getWasmBoyWasmCore = async (isInBrowser, externalWasmModuleUrl) => {
   let response = undefined;
+  const browserWasmModuleUrl = externalWasmModuleUrl || wasmModuleUrl;
 
   // Allow forcing the browser mode, but also check manually
   if (isInBrowser) {
-    response = await wasmBrowserInstantiate(wasmModuleUrl);
+    response = await wasmBrowserInstantiate(browserWasmModuleUrl);
   } else {
     if (typeof window !== 'undefined' || typeof self !== 'undefined') {
-      response = await wasmBrowserInstantiate(wasmModuleUrl);
+      response = await wasmBrowserInstantiate(browserWasmModuleUrl);
     } else {
       response = await wasmNodeInstantiate(wasmModuleUrl);
     }

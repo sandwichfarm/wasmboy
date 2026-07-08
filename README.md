@@ -74,6 +74,25 @@ Simply install through npm:
 
 Documentation for the project can be found on the [WasmBoy Wiki](https://github.com/torch2424/wasmBoy/wiki).
 
+### Strict CSP Assets
+
+The production browser bundle inlines worker and wasm assets by default. If your Content Security Policy does not allow `blob:` workers or `data:` wasm fetches, host the generated files yourself and pass their URLs during config:
+
+```js
+await WasmBoy.config({
+  workerUrls: {
+    lib: '/assets/wasmboy/worker/wasmboy.wasm.worker.js',
+    graphics: '/assets/wasmboy/worker/graphics.worker.js',
+    audio: '/assets/wasmboy/worker/audio.worker.js',
+    controller: '/assets/wasmboy/worker/controller.worker.js',
+    memory: '/assets/wasmboy/worker/memory.worker.js'
+  },
+  wasmCoreUrl: '/assets/wasmboy/core/core.untouched.wasm'
+});
+```
+
+Use `wasmboy.ts.worker.js` for `workerUrls.lib` when loading the TypeScript core bundle. The worker and wasm URLs must be reachable by the page and allowed by your CSP.
+
 ### Supported Platforms
 
 Try to test and aim for support on all major browsers (Chrome, Firefox, and Safari). Also, Node support works with the [`headless` option in the WasmBoy config](https://github.com/torch2424/wasmBoy/wiki/Lib-API#wasmboyoptions), and using the [Worker Threads](https://nodejs.org/api/worker_threads.html) `--experimental-worker` flag.
