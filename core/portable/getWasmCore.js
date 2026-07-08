@@ -1,7 +1,7 @@
 // JS Implementation of Instantiating the Wasm Build
 
 // Import our web assembly module
-import wasmModuleUrl from '../../dist/core/core.untouched.wasm';
+import wasmModuleUrl from '../../dist/core/core.optimized.wasm';
 
 // Import our wasm import object
 import importObject from './importObject';
