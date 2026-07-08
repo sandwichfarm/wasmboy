@@ -85,4 +85,14 @@ describe('WasmBoy Lib', () => {
       assert(saveStateInternalState[i] === saveStateTwoInternalState[i], true);
     }
   });
+
+  it('should be able to get a screenshot image data array', async () => {
+    await playWasmBoy();
+
+    const screenshot = await WasmBoy.screenshot();
+
+    assert(screenshot instanceof Uint8ClampedArray);
+    assert.strictEqual(screenshot.length, 160 * 144 * 4);
+    assert.strictEqual(screenshot[3], 255);
+  });
 });
